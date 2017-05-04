@@ -22,6 +22,7 @@ module.exports = function (authInfo) {
 			if(foundAt==-1){
 				req.userSession.IsAuthorised = false;
 				res.send(req.userSession);
+			
 			}else{
 				next();
 			}

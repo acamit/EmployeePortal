@@ -7,13 +7,14 @@ module.exports = function (req, res, next) {
 	    return _p8() + _p8(true) + _p8(true) + _p8();
 	}
 
+	
 	//check if the sessions object is created or not. This is for the first time the app is deployed.
 	global.sessions = global.sessions || {};
-
 	var sessionId;
 	if(req.cookies && req.cookies['sessionId'] && global.sessions[req.cookies['sessionId']]){
 		sessionId = req.cookies['sessionId'];
 		req.userSession = global.sessions[sessionId];
+			
 	}else{
 		sessionId = guid();
 		req.userSession = global.sessions[sessionId] = {
@@ -26,4 +27,4 @@ module.exports = function (req, res, next) {
 	req.userSession.lastAccessOn = Date.now();
 	res.cookie("sessionId", sessionId, {maxAge:10 * 60 * 1000});
 	next();
-};
+}

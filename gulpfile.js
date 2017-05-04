@@ -2,42 +2,44 @@
     'use strict';
 
     var gulp = require('gulp'),
-        jsFiles = ['*.js', 'src/**/*.js'],
-        nodemon= require('gulp-nodemon');
+        jsFiles = ['*.js', '/src/**/*.js', '/src/**/**/*.js'],
+        nodemon = require('gulp-nodemon');
 
     gulp.task('inject', function () {
         var wiredep = require('wiredep').stream,
             inject = require('gulp-inject'),
             options = {
-                        bowerJson: require('./bower.json'),
-                        directory: './public/lib',
-                         ignorePath:'../../public'
-                       },
+                bowerJson: require('./bower.json'),
+                directory: './public/lib',
+                ignorePath: '../../public'
+            },
             optionsI = {
-                  ignorePath:'/public'
+                ignorePath: '/public'
             },
             injectSrc = gulp.src(['./public/css/*.css',
-                                    './public/js/*.js'
-                ], {read:false});
-                       
+                './public/js/*.js'
+            ], {
+                read: false
+            });
+
         return gulp.src('./src/views/*.ejs')
-                    .pipe(wiredep(options))
-                    .pipe(inject(injectSrc, optionsI))
-                    .pipe(gulp.dest('./src/views/'));
+            .pipe(wiredep(options))
+            .pipe(inject(injectSrc, optionsI))
+            .pipe(gulp.dest('./src/views/'));
     });
 
-    gulp.task('serve', ['inject'], function(){
+    gulp.task('serve', [], function () {
         var options = {
-            script:'index.js',
-            delayTime:1,
-            env:{
-                'PORT':3000
+            script: 'index.js',
+            delayTime: 1,
+            env: {
+                'PORT': 3000
             },
-            watch:jsFiles
+            watch: jsFiles
         }
         return nodemon(options)
-                .on('restart', function(ev){
-                    console.log('restarting now...');
-                });
+            .on('restart', function (ev) {
+                console.log('restarting now...');
+            });
     });
 }());

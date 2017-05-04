@@ -14,5 +14,8 @@
     "./public/lib",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "handlebars": "^4.0.5"
+  }
 }
