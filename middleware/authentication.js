@@ -1,13 +1,12 @@
 module.exports = function (authInfo) {
 	return function (req, res, next) {
-		console.log(req._parsedUrl);
+		//console.log(req._parsedUrl);
 		//var currentUrl = req._parsedUrl || '/';
 		var currentUrl = req._parsedUrl.pathname.substring(1);
-		console.log(currentUrl);
+		//console.log(currentUrl);
 		if (currentUrl.indexOf('/') !== -1) {
 			currentUrl = currentUrl.substring(0, currentUrl.indexOf('/'));
 		}
-
 		var authRequired = (authInfo.indexOf(currentUrl) != -1);
 
 		if (authRequired) {

@@ -25,9 +25,6 @@ INSERT INTO [dbo].[Employees]
            ,'02/24/2017'
            ,'03/04/2017'
            ,2)
-GO
-
-
 INSERT INTO [dbo].[Notices]
            ([Title]
            ,[Description]
@@ -42,8 +39,6 @@ INSERT INTO [dbo].[Notices]
        ,'03/04/2016'
            ,'03/04/2016'
            ,1)
-GO
-
 
 INSERT INTO [dbo].[Issues]
            ([Title]
@@ -54,9 +49,6 @@ INSERT INTO [dbo].[Issues]
      VALUES
            ('Issue 1','description 3',1,1,1),
 		    ('Issue 2','description 4',1,2,1)
-GO
-
-
 INSERT INTO [dbo].[IssueHistories]
            ([IssueId]
            ,[Comments]
@@ -68,7 +60,6 @@ INSERT INTO [dbo].[IssueHistories]
            (1,'comments 1',1,'02-04-2107',6,1),
            (2,'comments 2',1,'02-04-2107',6,1),
            (2,'comments 3',1,'02-04-2107',6,1)
-GO
 
 
 INSERT INTO [dbo].[Users]
@@ -77,14 +68,13 @@ INSERT INTO [dbo].[Users]
            ,[IsAdmin])
      VALUES
            (6,'Password', 0)
-GO
-
-
 select * from dbo.Notices
 select * from dbo.Users
 SELECT * FROM EmployeePortal.dbo.Employees
 select * from dbo.IssueHistories
 select * from dbo.Issues
+select * from dbo.departments
+
 
 sp_help 'IssueHistories'
 
@@ -136,8 +126,6 @@ SELECT [IssueHistoryId]
 GO
 
 
-UPDATE DBO.Issues SET PostedBy = 6 WHERE IssueId = 4
-
 DELETE FROM dbo.IssueHistories WHERE IssueId = 1
 DELETE FROM dbo.Issues WHERE IssueId = 1
 
@@ -166,7 +154,7 @@ UPDATE Issues  SET IsActive = 0 WHERE IssueId = 3
 
 	--Issue data query
 
-SELECT DISTINCT ISD.IssueId,ISHD.IssueHistoryId,  Description,Title,ISHD.Status, Priority, PostedBy, PostedByName, ModifiedBy, ModifiedByName, ModifiedOn
+SELECT DISTINCT ISD.IssueId,ISHD.IssueHistoryId,  Description,Title,ISHD.Status, Priority, PostedBy, PostedByName, ModifiedBy, ModifiedByName, ModifiedOn, AssignedTo, AssignedToName
 FROM 
 (
 	SELECT I.IssueId, I.Title, I.IsActive,Description ,I.PostedBy, I.Priority, (EMP.FirstName + ' ' +EMP.LastName) AS 'PostedByName'
@@ -201,3 +189,12 @@ WHERE ISD.IsActive =1 AND ISHD.IssueHistoryId = (SELECT MAX(IssueHistoryId) FROM
 DELETE FROM dbo.IssueHistories
 DBCC CHECKIDENT ('EmployeePortal.dbo.IssueHistories',RESEED, 0)
 TRUNCATE TABLE DBO.[Issues]
+
+UPDATE [dbo].[Issues]
+   SET [Title] =''
+      ,[Description] = ''
+      ,[Priority] = ''
+      ,[IsActive] = ''
+ WHERE IssueId = 2
+GO
+

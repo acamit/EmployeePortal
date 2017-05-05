@@ -60,6 +60,8 @@
     }
 
     function init() {
+        window.userObj={};
+        userObj.IsAdmin=false;
         window.notices.init();
         getInitData();
         $(window).on('hashchange', handleHashChange);

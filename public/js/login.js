@@ -70,6 +70,7 @@ window.login = (function () {
     }
 
     function loginSH(data) {
+        window.userObj.IsAdmin = data.IsAdmin;
         if (data.IsAuthenticated) {
             window.location = '';
         } else {

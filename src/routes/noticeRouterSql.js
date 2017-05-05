@@ -10,7 +10,6 @@ module.exports = function() {
 						if(err){
 							console.log('Here is the err \n ' + err);
 						}else{
-							//console.log(recordset);
 							var notices = JSON.parse(JSON.stringify(recordset.recordset));
 							notices = notices.map(function(notice){
 								var obj = {

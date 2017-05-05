@@ -11,7 +11,7 @@ module.exports = function () {
             ps.input('password', mssql.VarChar);
             ps.prepare('SELECT * FROM [Users] where UserId=@userId AND Password=@password', function (err) {
                 if (err) {
-                    console.log("err" + err);
+                    console.log("error in login router" + err);
                 } else {
                     ps.execute({
                         userId: userId,
@@ -25,13 +25,14 @@ module.exports = function () {
                                 req.userSession.IsAuthenticated = true;
                                 req.userSession.IsAuthorised = false;
                                 req.userSession.user = data.recordset[0];
-                                console.log(JSON.stringify(req.userSession));
+                                req.userSession.IsAdmin = data.recordset[0].IsAdmin;
+                                // console.log(JSON.stringify(req.userSession));
                                 res.send(JSON.stringify(req.userSession));
                             } else {
                                 req.userSession.IsAuthenticated = false;
                                 req.userSession.IsAuthorised = false;
                                 req.userSession.user = null;
-
+                                req.userSession.IsAdmin = 0;
                                 res.send(JSON.stringify(req.userSession));
                             }
                         }

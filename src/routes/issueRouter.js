@@ -10,11 +10,10 @@ module.exports = function () {
 			if (req.userSession.user.IsAdmin == true) {
 				//queryString = 'SELECT ISS.Description, ISS.[IssueId],ISS.[Title],EMP.FirstName + \' \' +EMP.LastName AS \'PostedByName\',ISS.PostedBy,[Priority],[IsActive], [ISH].[AssignedTo],[ISH].[Status] FROM [dbo].[Issues] AS ISS JOIN [dbo].[IssueHistories] AS ISH ON ISH.[IssueId]=[ISS].[IssueId] LEFT JOIN DBO.Employees AS EMP ON EMP.EmployeeId = ISS.PostedBy';
 
-
 				queryString = "SELECT DISTINCT ISD.IssueId,ISHD.IssueHistoryId,  Description,Title,ISHD.Status, Priority, PostedBy, PostedByName, ModifiedBy, ModifiedByName, ModifiedOn, AssignedTo, AssignedToName FROM (SELECT I.IssueId, I.Title, I.IsActive,Description ,I.PostedBy, I.Priority, (EMP.FirstName + ' ' +EMP.LastName) AS 'PostedByName' FROM Issues I	JOIN Employees EMP		ON I.PostedBy = EMP.EmployeeId	WHERE I.IsActive = 1) AS ISD LEFT JOIN  (	SELECT ISH.IssueHistoryId,ISH.IssueId,ISH.Status, ISH.ModifiedOn, ISH.ModifiedBy,(EM.FirstName + ' ' +EM.LastName) AS 'ModifiedByName' FROM IssueHistories ISH	JOIN Employees EM		ON ISH.ModifiedBy = EM.EmployeeId) AS ISHD ON ISD.IssueId = ISHD.IssueId LEFT JOIN (SELECT ISH.IssueHistoryId,ISH.IssueId, ISH.AssignedTo,(EM.FirstName + ' ' +EM.LastName) AS 'AssignedToName' 	FROM IssueHistories ISH	JOIN Employees EM		ON ISH.AssignedTo = EM.EmployeeId) AS ISHAS ON ISHAS.IssueId = ISD.IssueId WHERE ISD.IsActive =1 AND ISHD.IssueHistoryId = (SELECT MAX(IssueHistoryId) FROM IssueHistories WHERE IssueId = ISD.IssueId) OR ISHD.IssueId IS NULL ";
 
 			} else {
-				queryString = 'SELECT ISS.[IssueId],ISS.Description, ISS.[Title],[Priority],[ISH].[AssignedTo],[ISH].[Status] FROM [dbo].[Issues] AS ISS  LEFT JOIN [dbo].[IssueHistories] AS ISH	ON ISH.[IssueId]=[ISS].[IssueId] where ISS.PostedBy = ' + req.userSession.user.EmployeeId;
+				queryString = 'SELECT ISS.[IssueId],ISS.Description,ISS.[Title],[Priority],[ISH].[AssignedTo],[ISH].[Status] FROM [dbo].[Issues] AS ISS  LEFT JOIN [dbo].[IssueHistories] AS ISH	ON ISH.[IssueId]=[ISS].[IssueId] where ISS.PostedBy = ' + req.userSession.user.EmployeeId;
 			}
 			request.query(queryString, function (err, recordset) {
 				if (err) {
@@ -47,7 +46,6 @@ module.exports = function () {
 							Description: issue.Description,
 							AssignedToName: issue.AssignedToName || 'N.A',
 							ModifiedByName: issue.ModifiedByName || 'N.A'
-
 						};
 						return obj;
 					});
@@ -59,37 +57,47 @@ module.exports = function () {
 			});
 		})
 		.put(function (req, res) {
-			var noticeId = parseInt(req.body.id),
+			var issueId = parseInt(req.body.id),
 				title = req.body.title,
 				desc = req.body.desc,
-				startDate = req.body.startDate,
-				endDate = req.body.endDate;
-
-			startDate = startDate.replace(/-/g, '/');
-			endDate = endDate.replace(/-/g, '/');
+				priority = req.body.priority;
+			var responseObj = {
+				success: false,
+				data: null
+			}
 			var ps = new mssql.PreparedStatement();
-			ps.input('title', mssql.VarChar(100));
-			ps.input('desc', mssql.VarChar(500));
-			ps.input('id', mssql.Int);
-			ps.input('sDate', mssql.VarChar(20));
-			ps.input('eDate', mssql.VarChar(20));
-
-			ps.prepare('UPDATE dbo.Notices SET Description=@desc, Title= @title, StartDate=@sDate,ExpirationDate=@eDate  WHERE NoticeId=@id', function (err) {
-				console.log(err);
-				ps.execute({
-					title: title,
-					desc: desc,
-					id: noticeId,
-					sDate: startDate,
-					eDate: endDate
-				}, function (err, data) {
-					if (err) {
-						console.log(err);
-					} else {
-						res.send("Updated");
-					}
-				});
+			var queryString = '';
+			ps.input('title', mssql.VarChar);
+			ps.input('desc', mssql.VarChar);
+			ps.input('priority', mssql.Int);
+			ps.input('issueId', mssql.Int);
+			if (req.userSession.user.IsAdmin == true) {
+				queryString = "";
+			} else {
+				queryString = "UPDATE [dbo].[Issues] SET [Title] =@title,[Description] = @desc , [Priority] = @priority WHERE IssueId = @issueId";
+			}
+			ps.prepare(queryString, function (err) {
+				if (err) {
+					console.log("update error 1" + err);
+				} else {
+					ps.execute({
+						title: title,
+						desc: desc,
+						priority: priority,
+						issueId: issueId
+					}, function (err, data) {
+						if (err) {
+							console.log(err);
+						} else {
+							responseObj.success = true;
+							responseObj.data = req.body;
+							responseObj.data.priorityName = IssuePriorityValue(priority);
+							res.send(responseObj);
+						}
+					});
+				}
 			});
+
 		})
 		.delete(function (req, res) {
 			var responseObj = {
@@ -147,35 +155,50 @@ module.exports = function () {
 		.post(function (req, res) {
 			var noticetitle = req.body.title,
 				noticeDesc = req.body.desc,
-				startDate = req.body.startDate,
-				endDate = req.body.endDate;
+				priority = req.body.priority,
+				postedBy = req.userSession.user['EmployeeId'];
 
 			var ps = new mssql.PreparedStatement();
 			ps.input('title', mssql.VarChar(100));
 			ps.input('desc', mssql.VarChar(500));
-			ps.input('sDate', mssql.VarChar(20));
-			ps.input('eDate', mssql.VarChar(20));
+			ps.input('postedBy', mssql.VarChar(20));
+			ps.input('priority', mssql.VarChar(20));
 
-			startDate = startDate.replace(/-/g, '/');
-			endDate = endDate.replace(/-/g, '/');
-
-			ps.prepare('INSERT INTO dbo.Notices(Description, Title, StartDate, ExpirationDate, IsActive, PostedBy) VALUES(@desc, @title, @sDate, @eDate, 1 ,1)', function (err) {
+			ps.prepare('INSERT INTO [dbo].[Issues]([Title],[Description],[PostedBy],[Priority],[IsActive])VALUES (@title, @desc, @postedBy, @priority, 1);SELECT @@IDENTITY as id', function (err) {
+				var responseObj = {
+					data: null,
+					success: false
+				};
 				if (err) {
 					console.log(err);
 				} else {
 					ps.execute({
 						title: noticetitle,
 						desc: noticeDesc,
-						sDate: startDate,
-						eDate: endDate
+						postedBy: postedBy,
+						priority: priority
 					}, function (err, data) {
+						console.log(data);
+						console.log(data.recordset[0]['id']);
+
 						if (err) {
 							console.log(err);
-							res.send('err');
 						} else {
-							console.log("executed data " + JSON.stringify(data));
-							res.send("Inserted");
+							responseObj.success = true;
+							responseObj.data = {
+								id:data.recordset[0]['id'],
+								title: noticetitle,
+								desc: noticeDesc,
+								priority: priority,
+								priorityName: IssuePriorityValue(priority),
+								status: 1,
+								statusName: 'open',
+								assignedTo: -1,
+								assignedToName: "N.A"
+							};
+
 						}
+						res.send(responseObj);
 					});
 				}
 			});
@@ -192,11 +215,14 @@ module.exports = function () {
 				var ps = new mssql.PreparedStatement();
 				ps.input('id', mssql.Int);
 				ps.prepare('SELECT [IssueHistoryId],[Comments],[ModifiedBy],[ModifiedOn],[AssignedTo],[Status] FROM [dbo].[IssueHistories] WHERE [IssueId]=@id', function (err, recordset) {
-					console.log(err);
+					if (err) {
+						console.log("Issue history error 1" + err);
+					}
 					ps.execute({
 						id: issueId
 					}, function (err, data) {
 						if (err) {
+							console.log("Issue history error 2" + err);
 							console.log(err);
 						} else {
 							responseObj.invalidId = false;
@@ -209,5 +235,19 @@ module.exports = function () {
 			}
 
 		});
+
+
+	function IssuePriorityValue(priority) {
+		var priorityNum = parseInt(priority, 10);
+		var prValue = ""
+		if (priorityNum == 1) {
+			prValue = "Normal";
+		} else if (priorityNum == 2) {
+			prValue = "Urgent";
+		} else if (priorityNum == 3) {
+			prValue = "Immediate";
+		}
+		return prValue;
+	}
 	return issueRouter;
 };
