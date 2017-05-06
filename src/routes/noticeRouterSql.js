@@ -67,7 +67,9 @@ module.exports = function() {
 								if(err){
 									console.log(err);
 								}else{
-									res.send("Deleted");
+									res.send({
+										id:noticeId
+									});
 								}
 							});
 						}

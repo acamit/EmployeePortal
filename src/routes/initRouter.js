@@ -4,9 +4,9 @@ module.exports = function () {
     initRouter.route('/')
         .get(function (req, res) {
             res.send({
-               /* IsAuthenticated: req.userSession.IsAuthenticated,
+                IsAuthenticated: req.userSession.IsAuthenticated,
                 IsAuthorised: req.userSession.IsAuthorised,
-                userName: req.userSession.user.Name*/
+                user: req.userSession.user
             });
         })
     return initRouter;

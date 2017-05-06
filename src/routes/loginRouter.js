@@ -7,9 +7,10 @@ module.exports = function () {
             var userId = req.body.userId;
             var pwd = req.body.password;
             var ps = new mssql.PreparedStatement();
-            ps.input('userId', mssql.Int);
+            ps.input('userId', mssql.VarChar);
             ps.input('password', mssql.VarChar);
-            ps.prepare('SELECT * FROM [Users] where UserId=@userId AND Password=@password', function (err) {
+            ps.prepare('SELECT EMP.EmployeeId, EMP.Email, USR.IsAdmin , EMP.FirstName, EMP.LastName FROM dbo.Employees EMP JOIN dbo.Users USR ON	EMP.EmployeeId = USR.EmployeeId WHERE EMP.Email = @userId AND Password =  @password COLLATE SQL_Latin1_General_CP1_CS_AS', function (err) {
+                // ps.prepare('SELECT * FROM [Users] where UserId=@userId AND Password=@password', function (err) {
                 if (err) {
                     console.log("error in login router" + err);
                 } else {
@@ -26,7 +27,6 @@ module.exports = function () {
                                 req.userSession.IsAuthorised = false;
                                 req.userSession.user = data.recordset[0];
                                 req.userSession.IsAdmin = data.recordset[0].IsAdmin;
-                                // console.log(JSON.stringify(req.userSession));
                                 res.send(JSON.stringify(req.userSession));
                             } else {
                                 req.userSession.IsAuthenticated = false;

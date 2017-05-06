@@ -14,7 +14,6 @@ module.exports = function (req, res, next) {
 	if(req.cookies && req.cookies['sessionId'] && global.sessions[req.cookies['sessionId']]){
 		sessionId = req.cookies['sessionId'];
 		req.userSession = global.sessions[sessionId];
-			
 	}else{
 		sessionId = guid();
 		req.userSession = global.sessions[sessionId] = {

@@ -22,12 +22,12 @@
 
 
     function getInitDataSH(data) {
-        if (data.isAuthenticated) {
+        if (data.IsAuthenticated) {
             $liUser.removeClass('hidden');
+            $liUser.find('#usrName').html("Hi " + data.user.FirstName);
         } else {
             $liLogin.removeClass('hidden');
         }
-
     }
 
     function handleHashChange() {

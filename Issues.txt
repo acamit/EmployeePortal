@@ -1,3 +1,0 @@
-non admin issues section
-    1. on delete of row the edit function is not working
-    2. on details edit does not show the priority
