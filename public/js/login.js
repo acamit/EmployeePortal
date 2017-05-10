@@ -71,11 +71,14 @@ window.login = (function () {
 
     function loginSH(data) {
         window.userObj.IsAdmin = data.IsAdmin;
+        console.log("login data" + window.userObj.IsAdmin);
         if (data.IsAuthenticated) {
             // $liLogin = $("#liLogin"),
             //     $liUser = $('#liUser');
             // $liLogin.addClass('hidden');
             // $liUser.removeClass('hidden');
+         //   console.log(data);
+            window.sessionStorage.usr = JSON.stringify(data);
             window.location = '';
         } else {
             parentClosure.$errorBox.removeClass('hidden');

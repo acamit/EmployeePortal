@@ -36,7 +36,9 @@ app.use(cp());
 app.use(express.static('public'));
 app.use(session);
 app.use(authentication([
-	'issues'
+	'issues',
+	'employees',
+	'profile'
 ]));
 /*
 app.use(authorisation(
@@ -73,9 +75,8 @@ mssql.connect(config)
 		console.log("I am connected");
 	})
 	.catch(function (err) {
-		console.log("I could not connect");
+		console.log("I could not connect" + err);
 	});
-
 
 //Start Application
 

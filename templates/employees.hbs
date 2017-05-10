@@ -1,0 +1,146 @@
+<div id="searchEmployeeTemplate">
+    <div id="searchByDiv">
+        <h3>Search By</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchFirstName">First Name</label>
+                    <input type="text" class="form-control" id="searchFirstName" placeholder="First Name">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchLastName">Last Name</label>
+                    <input type="text" class="form-control" id="searchLastName" placeholder="Last Name">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchEmail">Email address</label>
+                    <input type="email" class="form-control" id="searchEmail" placeholder="Email">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchBeginDate">Begin Date</label>
+                    <input type="date" class="form-control" id="searchBeginDate" placeholder="Begin Date">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchEndDate">End Date</label>
+                    <input type="date" class="form-control" id="searchEndDate" placeholder="End Date">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="searchDepartment">Department</label>
+                    <select name="searchDepartment" id="searchDepartment" class="form-control">
+                        <option value="">Select Department</option>
+                        {{#each @root.data }}
+                            <option value="{{DepartmentId}}">{{DepartmentName}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <button type="button" id="searchBtn" class="btn btn-primary btn-lg pull-right">Search</button>
+        <div class="clearfix"></div>
+
+    </div>
+    <hr /> 
+    {{#if @root.user.IsAdmin}}
+        <button type="button" id="addEmpBtn" class="btn btn-primary btn-lg pull-left">Add</button> 
+    {{/if}}
+    <div id="resultsDiv">
+        <div class="clearfix"></div>
+        <br/>
+        <table class="table table-bordered" id="resultsTable">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Date of Joining</th>
+                    <th>Department</th>
+                    {{#if @root.user.IsAdmin}}
+                    <th>Actions</th>
+                    {{/if}}
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="EditCreateModal" data-info-empId="-1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Edit/Create</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="modalFirstName">First Name</label>
+                            <input type="text" class="form-control" id="modalFirstName" placeholder="First Name" required="required">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="modalLastName">Last Name</label>
+                            <input type="text" class="form-control" id="modalLastName" placeholder="Last Name" required="required">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="modalEmail">Email address</label>
+                            <input type="email" class="form-control" id="modalEmail" placeholder="Email" required="required">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="modalBeginDate">Begin Date</label>
+                            <input type="date" class="form-control" id="modalBeginDate" placeholder="Begin Date" required="required">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="modalEndDate">End Date</label>
+                            <input type="date" class="form-control" id="modalEndDate" placeholder="End Date" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="modalDepartment">Department</label>
+                            <select name="modalDepartment" id="modalDepartment" class="form-control" required="required">
+                            {{#each @root.data }}
+                                <option value="{{DepartmentId}}">{{DepartmentName}}</option>
+                            {{/each}}
+                        </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="modalPassword">Password</label>
+                            <input type="text" class="form-control" id="modalPassword" placeholder="Password" required="required">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="modalIsAdmin">Is Admin</label>
+
+                            <div class="checkbox">
+                                <label>
+                           <input type="checkbox" id="modalIsAdmin">
+                        </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="modalSaveBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

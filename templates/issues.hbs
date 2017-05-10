@@ -1,7 +1,7 @@
 {{!--Template for showing issues--}}
 
 <div id="divIssuesTemplate">
-       
+
     <button id="btnCreate" type="button" class="btn btn-primary  {{#if @root.IsAdmin }} hidden {{/if}}">Create</button>
 
     <table id="tableIssues" class="table table-hover table-condensed">
@@ -21,12 +21,12 @@
             {{#each @root.issues}}
             <tr data-info-id={{id}}>
                 <td data-info-title='{{Title}}'>{{Title}}</td>
-                <td data-info-priority='{{PriorityId}}'>{{Priority}}</td>
+                <td data-info-priority='{{PriorityId}}' data-info-priorityName='{{Priority}}'>{{Priority}}</td>
                 {{#if @root.IsAdmin }}
                 <td data-info-postedBy='{{PostedBy}}' data-info-postedByName='{{PostedByName}}'>{{PostedByName}}</td>
                 {{/if}}
                 <td data-info-assignedTo='{{AssignedTo}}'>{{AssignedToName}}</td>
-                <td data-info-status='{{StatusId}}'>{{Status}}</td>
+                <td data-info-status='{{StatusId}}' data-info-statusName='{{Status}}'>{{Status}}</td>
                 <td>
                     <span class="glyphicon glyphicon-pencil" data-action="edit" aria-hidden="true"></span>
                     <span class="glyphicon glyphicon-remove" data-action="delete" aria-hidden="true"></span>
@@ -66,12 +66,14 @@
                             </div>
                         </div>
 
+                        {{#if @root.IsAdmin}}
                         <div class="form-group">
                             <label for="postedBy" class="col-sm-3 control-label">Posted By</label>
                             <div class="col-sm-9">
                                 <div class="well well-sm" id="postedBy">System admin</div>
                             </div>
                         </div>
+                        {{/if}}
                         <div class="form-group">
                             <label for="priority" class="col-sm-3 control-label">Priority</label>
                             <div class="col-sm-9">
@@ -114,10 +116,10 @@
                     <h4 id="modalTitle" class="modal-title">Edit Issue</h4>
                 </div>
                 <div class="modal-body">
-                    
+
                     {{#if @root.IsAdmin }}
                     <div class="form-horizontal" id="adminForm">
-                      
+
                         <div class="form-group">
                             <label for="txtComments" class="col-sm-3 control-label">Comments</label>
                             <div class="col-sm-9">
@@ -134,7 +136,7 @@
                                 </select>
                             </div>
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="status" class="col-sm-3 control-label">Status </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="status" name="status">
@@ -145,9 +147,9 @@
                             </div>
                         </div>
                     </div>
-                     {{else }}
-                    
-                    <div class="form-horizontal" id="nonAdminForm" >
+                    {{else }}
+
+                    <div class="form-horizontal" id="nonAdminForm">
                         <div class="form-group">
                             <label for="txtIssueTitle" class="col-sm-3 control-label">Title</label>
                             <div class="col-sm-9">

@@ -1,0 +1,44 @@
+<div id="profileTemplate">
+    <style> 
+        .cursor{
+            cursor: pointer;
+        }
+    </style>
+    <h3>Profile</h3>
+    <div id="profileDetails">
+        <div class="form-group">
+            <label for="profileFirstName">First Name</label>
+            <input type="text" class="form-control toggledElement hidden" id="profileFirstName" value="{{@root.data.firstName}}" placeholder="First Name">
+            <div class="well well-sm toggledElement">{{@root.data.firstName}}</div>
+        </div>
+        <div class="form-group">
+            <label for="profileLastName">Last Name</label>
+            <div class="well well-sm toggledElement">{{@root.data.lastName}}</div>            
+            <input type="text" class="form-control toggledElement hidden" id="profileLastName" value="{{@root.data.lastName}}" placeholder="Last Name">
+        </div>
+        <div class="form-group">
+            <label for="profileDepartmentSelect">Department</label>
+            <div class="well well-sm toggledElement">{{@root.data.deptName}}</div>            
+            <select name="profileDepartmentSelect" class="form-control toggledElement hidden" id="profileDepartmentSelect">
+                <option value="{{@root.data.deptId}}">{{@root.data.deptName}}</option>
+            </select>
+        </div>
+
+        <div class="form-group toggledElement hidden">
+            <label for="profileOldPassword">Old Password</label>
+            <input type="password" class="form-control" id="profileOldPassword" placeholder="Old Password">
+        </div> 
+
+        <div class="form-group toggledElement  hidden">
+            <label for="profileNewPassword">New Password</label>
+            <input type="password" class="form-control" id="profileNewPassword" placeholder="New Password">
+        </div>
+        <div class="form-group toggledElement hidden">
+            <label for="profileConfirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="profileConfirmPassword" placeholder="Confirm Password">
+        </div>
+        <button type="button" id="saveBtn" class="btn btn-primary btn-lg pull-right toggledElement hidden">Save</button>
+        <button type="button" id="editBtn" class="btn btn-primary btn-lg pull-left toggledElement">Edit</button>
+        <div class="clearfix"></div>
+    </div>
+</div>

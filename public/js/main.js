@@ -10,6 +10,7 @@
 
     //functions
     function getInitData() {
+
         $liLogin.addClass('hidden');
         $liUser.addClass('hidden');
 
@@ -26,6 +27,7 @@
             $liUser.removeClass('hidden');
             $liUser.find('#usrName').html("Hi " + data.user.FirstName);
         } else {
+            window.sessionStorage.clear();
             $liLogin.removeClass('hidden');
         }
     }
@@ -39,13 +41,16 @@
                 window.issues.handleHash(injectBodyContent);
                 break;
             case "#employees":
-                window.notices.handleHash(injectBodyContent);
+                window.employees.handleHash(injectBodyContent);
                 break;
             case "#login":
                 window.login.handleHash(injectBodyContent);
                 break;
             case "#logout":
-               // window.logout.handleHash(injectBodyContent);
+                // window.logout.handleHash(injectBodyContent);
+                break;
+            case "#profile":
+                window.profile.handleHash(injectBodyContent);
                 break;
             default:
                 break;
@@ -60,8 +65,8 @@
     }
 
     function init() {
-        window.userObj={};
-        userObj.IsAdmin=false;
+        window.userObj = {};
+        userObj.IsAdmin = false;
         window.notices.init();
         getInitData();
         $(window).on('hashchange', handleHashChange);
