@@ -47,7 +47,7 @@
                 window.login.handleHash(injectBodyContent);
                 break;
             case "#logout":
-                // window.logout.handleHash(injectBodyContent);
+                window.logout.handleHash(injectBodyContent);
                 break;
             case "#profile":
                 window.profile.handleHash(injectBodyContent);
@@ -64,13 +64,23 @@
         }
     }
 
+    function navbarchange() {
+        $('#bs-example-navbar-collapse-1 ul li').removeClass("active");
+        $(this).closest('li').addClass("active");
+
+    }
+
     function init() {
         window.userObj = {};
         userObj.IsAdmin = false;
         window.notices.init();
         getInitData();
+
         $(window).on('hashchange', handleHashChange);
+        $('#bs-example-navbar-collapse-1').on('click', 'ul li', navbarchange);
         handleHashChange();
+
+
     }
 
     //init call

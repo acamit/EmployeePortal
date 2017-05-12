@@ -8,7 +8,6 @@ module.exports = function (authInfo) {
 			currentUrl = currentUrl.substring(0, currentUrl.indexOf('/'));
 		}
 		var authRequired = (authInfo.indexOf(currentUrl) != -1);
-
 		if (authRequired) {
 			if (!req.userSession.IsAuthenticated) {
 				req.userSession.IsAuthenticated = false;

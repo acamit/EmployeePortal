@@ -1,6 +1,7 @@
-var express = require('express');
-var mssql = require('mssql');
-var loginRouter = express.Router();
+var express = require('express'),
+    mssql = require('mssql'),
+    path = require('path'),
+    loginRouter = express.Router();
 module.exports = function () {
     loginRouter.route('/')
         .post(function (req, res) {
@@ -23,12 +24,12 @@ module.exports = function () {
                         } else {
                             // console.log(data);
                             if (data.recordset.length == 1) {
-                             
+
                                 req.userSession.IsAuthenticated = true;
                                 req.userSession.IsAuthorised = false;
                                 req.userSession.user = data.recordset[0];
                                 req.userSession.IsAdmin = data.recordset[0].IsAdmin;
-                             //      console.log(JSON.stringify(req.userSession));
+                                //      console.log(JSON.stringify(req.userSession));
                                 res.send(JSON.stringify(req.userSession));
                             } else {
                                 req.userSession.IsAuthenticated = false;
@@ -41,6 +42,13 @@ module.exports = function () {
                     });
                 }
             });
+        });
+
+    loginRouter.route('/template')
+        .get(function (req, res) {
+            res.sendFile(
+                path.join(__dirname, '..\\..\\templates', 'login.hbs')
+            );
         });
     return loginRouter;
 }

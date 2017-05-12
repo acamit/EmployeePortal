@@ -32,7 +32,6 @@ window.profile = (function () {
     }
 
     function getDataSH(data) {
-        console.log(data);
         if (data.IsAuthenticated === false) {
             var html = 'Please <a href="#login">Login</a> to access profile';
             prepareHTML.htmlInjector(html, null);

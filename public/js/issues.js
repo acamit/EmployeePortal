@@ -18,7 +18,7 @@ window.issues = (function () {
 
         //  if (prepareHTML.templateFunction) {
         $.ajax({
-            url: '/issues-template',
+            url: '/issues/template',
             method: 'GET',
             dataType: 'text',
             success: getTemplateSH,

@@ -9,13 +9,9 @@ module.exports = (function () {
 	var employeeRouter = require('./employeeRouter')();
 	var profileRouter = require('./profileRouter')();
 	var deptRouter = require('./departmentsRouter')();
+	var logoutRouter = require('./logoutRouter')();
 	
 	
-	var noticeTemplateRouter = require('./templates/noticeTemplateRouter')();
-	var issuesTemplateRouter = require('./templates/issuesTemplateRouter')();
-	var loginTemplateRouter = require('./templates/loginTemplateRouter')();
-
-
 	//init
 	function init(appConfig){
 		appConfig.app.use('/notices', noticeRouter);
@@ -28,13 +24,7 @@ module.exports = (function () {
 		appConfig.app.use('/employees', employeeRouter);
 		appConfig.app.use('/profile', profileRouter);
 		appConfig.app.use('/department', deptRouter);
-		
-		//template Routes
-		appConfig.app.use('/notices-template', noticeTemplateRouter);
-		appConfig.app.use('/issues-template', issuesTemplateRouter);
-		appConfig.app.use('/login-template', loginTemplateRouter);
-
-		
+		appConfig.app.use('/logout', logoutRouter);
 	}
 	return {
 		init:init

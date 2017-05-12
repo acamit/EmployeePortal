@@ -1,15 +1,13 @@
 var express = require('express'),
 	issueRouter = express.Router(),
-	mssql = require('mssql');
-
+	mssql = require('mssql'),
+	path = require('path');
 module.exports = function () {
 	issueRouter.route('/')
 		.get(function (req, res) {
 			var request = new mssql.Request();
 			var queryString = '';
 			if (req.userSession.user.IsAdmin == true) {
-				console.log(req.userSession);
-				//queryString = "SELECT DISTINCT ISD.IssueId,ISHD.IssueHistoryId,  Description,Title,ISHD.Status, Priority, PostedBy, PostedByName, ModifiedBy, ModifiedByName, ModifiedOn, AssignedTo, AssignedToName FROM (SELECT I.IssueId, I.Title, I.IsActive,Description ,I.PostedBy, I.Priority, (EMP.FirstName + ' ' +EMP.LastName) AS 'PostedByName' FROM Issues I	JOIN Employees EMP		ON I.PostedBy = EMP.EmployeeId	WHERE I.IsActive = 1) AS ISD LEFT JOIN  (	SELECT ISH.IssueHistoryId,ISH.IssueId,ISH.Status, ISH.ModifiedOn, ISH.ModifiedBy,(EM.FirstName + ' ' +EM.LastName) AS 'ModifiedByName' FROM IssueHistories ISH	JOIN Employees EM		ON ISH.ModifiedBy = EM.EmployeeId) AS ISHD ON ISD.IssueId = ISHD.IssueId LEFT JOIN (SELECT ISH.IssueHistoryId,ISH.IssueId, ISH.AssignedTo,(EM.FirstName + ' ' +EM.LastName) AS 'AssignedToName' 	FROM IssueHistories ISH	JOIN Employees EM		ON ISH.AssignedTo = EM.EmployeeId) AS ISHAS ON ISHAS.IssueId = ISD.IssueId WHERE ISD.IsActive =1 AND ISHD.IssueHistoryId = (SELECT MAX(IssueHistoryId) FROM IssueHistories WHERE IssueId = ISD.IssueId) OR ISHD.IssueId IS NULL";
 				queryString = "SELECT ISD.IssueId, Title,ISD.Priority, Description, PostedBy, PostedByName, IssueHistoryId, Comments, ModifiedBy, ModifiedByName, ModifiedOn, Status, AssignedTo, AssignedToName FROM ( SELECT ISS.IssueId, ISS.Title, ISS.Description, ISS.PostedBy, ISS.Priority, (EMP.FirstName + ' ' +EMP.LastName) AS 'PostedByName' FROM Issues ISS JOIN Employees EMP ON ISS.PostedBy = EMP.EmployeeId WHERE ISS.IsActive=1) AS ISD LEFT JOIN (SELECT ISHMD.IssueHistoryId,ISHAD.IssueHistoryId AS 'HIS', ISHMD.IssueId, ISHMD.Comments, ISHMD.ModifiedBy, ISHMD.ModifiedOn, ISHMD.Status, (ISHMD.FirstName + ' ' +ISHMD.LastName) AS 'ModifiedByName' , ISHAD.AssignedTo, ISHAD.AssignedToName FROM (SELECT * FROM IssueHistories ISH LEFT JOIN Employees EMP ON EMP.EmployeeId = ISH.ModifiedBy) AS ISHMD LEFT JOIN (SELECT ISH.IssueHistoryId, ISH.AssignedTo, (EMP.FirstName + ' ' +EMP.LastName) AS 'AssignedToName' FROM IssueHistories ISH	LEFT JOIN Employees EMP	ON EMP.EmployeeId = ISH.AssignedTo) AS ISHAD ON ISHMD.IssueHistoryId = ISHAD.IssueHistoryId) AS ISHD ON ISD.IssueId = ISHD.IssueId WHERE ModifiedOn = (SELECT MAX(ModifiedOn) FROM IssueHistories ISH WHERE ISH.IssueId = ISD.IssueId)";
 			} else {
 				queryString = 'SELECT ISS.[IssueId], ISH.Comments,ISS.Description,ISS.[Title],[Priority],[ISH].[AssignedTo],[ISH].[Status], (EMP.FirstName + \' \' + EMP.LastName) AS AssignedToName FROM [dbo].[Issues] AS ISS LEFT JOIN ([dbo].[IssueHistories] AS ISH	LEFT JOIN dbo.Employees EMP ON ISH.AssignedTo = EMP.EmployeeId) ON ISH.[IssueId]=[ISS].[IssueId] WHERE ISH.ModifiedOn = (SELECT MAX(ModifiedOn) FROM IssueHistories WHERE IssueId = ISS.IssueId) AND ISS.PostedBy = ' + req.userSession.user.EmployeeId + ' ORDER BY IssueId';
@@ -295,7 +293,15 @@ module.exports = function () {
 
 		});
 
-
+	issueRouter.route('/template')
+		.get(function (req, res) {
+			res.sendFile(
+				path.join(
+					__dirname,
+					'..\\..\\templates',
+					'issues.hbs'));
+		});
+	
 	function IssuePriorityValue(priority) {
 		var priorityNum = parseInt(priority, 10);
 		var prValue = ""

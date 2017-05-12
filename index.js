@@ -38,7 +38,8 @@ app.use(session);
 app.use(authentication([
 	'issues',
 	'employees',
-	'profile'
+	'profile',
+	'notices-sql'
 ]));
 /*
 app.use(authorisation(
@@ -82,6 +83,24 @@ mssql.connect(config)
 
 var port = process.env.PORT || 5000;
 
-app.listen(3000, function () {
+/*app.listen(3000, function () {
 	console.log('App listening on 3000');
-});
+});*/
+
+app.listen(3000, function () {
+  setInterval(function(){
+  	var gs = global.sessions;
+
+  	if(gs){
+  		var prop;
+  		for(prop in gs){
+  			if(Date.now() - gs[prop].lastAccessedOn > 10 * 60 * 1000){
+  				delete gs[prop];
+  			}
+  		}
+  	}
+
+  }, 1 * 60 * 60 * 1000);
+  console.log('Example app listening on port 3000!');
+}); 
+ 

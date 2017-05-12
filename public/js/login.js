@@ -12,7 +12,7 @@ window.login = (function () {
             prepareHTML.htmlInjector = htmlInjector;
         }
         $.ajax({
-            url: '/login-template',
+            url: '/login/template',
             method: 'GET',
             dataType: 'text',
             success: getTemplateSH,

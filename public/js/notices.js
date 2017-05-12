@@ -9,7 +9,7 @@ window.notices = (function () {
 	//functions
 
 	function handleHash(htmlInjector) {
-		if(htmlInjector){
+		if (htmlInjector) {
 			prepareHTML.htmlInjector = htmlInjector;
 		}
 		$.ajax({
@@ -24,7 +24,7 @@ window.notices = (function () {
 
 		if (!prepareHTML.templateFunction) {
 			$.ajax({
-				url: '/notices-template',
+				url: '/notices-sql/template',
 				method: 'GET',
 				success: getTemplateSH,
 				error: function () {
@@ -34,20 +34,32 @@ window.notices = (function () {
 		}
 	}
 
-	function getDataSH(notices) {
-		prepareHTML.data = notices;
-		prepareHTML();
+	function getDataSH(data) {
+		if (data.IsAuthenticated === false) {
+			var html = 'Please <a href="#login">Login</a> to access notices';
+			prepareHTML.htmlInjector(html, null);
+		} else if (data.IsAuthorized === false) {
+			var html = 'Please <a href="#logout">Logout</a> and Login with proper role to access notices';
+			prepareHTML.htmlInjector(html, pageSetup);
+		} else {
+			//console.log(data);
+			prepareHTML.data = data;
+			prepareHTML();
+		}
 	}
+
 	function getTemplateSH(templateText) {
 		prepareHTML.templateFunction = Handlebars.compile(templateText);
 		prepareHTML();
 	}
+
 	function prepareHTML() {
 		if (prepareHTML.data && prepareHTML.templateFunction) {
 			var html = prepareHTML.templateFunction(prepareHTML.data);
 			prepareHTML.htmlInjector(html, pageSetup);
 		}
 	}
+
 	function clearModal() {
 		parentClosure.$modal.attr('notice-id', -1);
 		parentClosure.$noticeTitle.val('');
@@ -73,6 +85,7 @@ window.notices = (function () {
 		parentClosure.$modal.attr('notice-id', noticeId);
 		parentClosure.$noticeTitle.val(titleContent.trim());
 		parentClosure.$noticeDesc.val(descContent.trim());
+
 		parentClosure.$startDate.val(startDate);
 		parentClosure.$endDate.val(endDate);
 		parentClosure.$modal.modal('show');
@@ -101,8 +114,9 @@ window.notices = (function () {
 	}
 
 	function saveNoticeSH() {
-		
-		handleHash();
+		parentClosure.$modal.on('hidden.bs.modal', function () {
+			handleHash();
+		});
 	}
 
 	function deleteNotice() {
@@ -120,7 +134,6 @@ window.notices = (function () {
 	function deleteSH(data) {
 		parentClosure.$divNotices.find('div[notice-id=' + data.id + ']').remove();
 	}
-
 
 	function pageSetup() {
 		parentClosure.$divNotices = $('#divNoticesTemplate #divNotices'),
