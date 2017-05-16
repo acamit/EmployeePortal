@@ -1,7 +1,8 @@
 var express = require('express');
 var path = require('path');
 var mssql = require('mssql');
-var date= require('date-and-time');
+var date = require('date-and-time'),
+    validator = require('validator');
 var employeeRouter = express.Router();
 module.exports = function () {
     employeeRouter.route('/')
@@ -82,7 +83,7 @@ module.exports = function () {
             if (appendString) {
                 queryString += ' WHERE (' + appendString;
             }
-       
+
             var datap = {
                 firstName: searchFirstName,
                 lastName: searchLastName,
@@ -123,7 +124,7 @@ module.exports = function () {
                 empid = req.body.empid,
                 lastName = req.body.lastName,
                 email = req.body.email,
-                doj = req.body.doj|| null,
+                doj = req.body.doj || null,
                 terminationdate = req.body.terminationdate || null,
                 deptId = req.body.deptId,
                 isAdmin = req.body.isAdmin,
@@ -150,7 +151,7 @@ module.exports = function () {
                     console.log('insert employee prepare error : ' + err);
                 } else {
                     var params = {
-                        empid:empid,
+                        empid: empid,
                         firstName: firstName,
                         lastName: lastName,
                         email: email,

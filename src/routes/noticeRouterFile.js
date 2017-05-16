@@ -1,4 +1,5 @@
 var express = require('express');
+var validator = require('validator');
 var fs = require('fs');
 var noticeRouter = express.Router();
 module.exports = function() {

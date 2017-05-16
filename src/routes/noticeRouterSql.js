@@ -1,6 +1,7 @@
 var express = require('express'),
 	noticeRouter = express.Router(),
 	mssql = require('mssql'),
+	validator = require('validator'),
 	path = require('path');
 module.exports = function () {
 	noticeRouter.route('/')

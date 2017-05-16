@@ -1,4 +1,6 @@
 var express = require('express');
+var validator = require('validator');
+var path = require('path');
 var noticeRouter = express.Router();
 module.exports = function () {
 	noticeRouter.route('/')

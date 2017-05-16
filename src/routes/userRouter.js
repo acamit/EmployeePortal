@@ -1,5 +1,6 @@
 var express = require('express'),
     userRouter = express.Router(),
+    validator = require('validator'),
     mssql = require('mssql');
 
 module.exports = function () {

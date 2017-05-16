@@ -54,6 +54,17 @@ window.login = (function () {
         userid = parentClosure.$txtUserId.val();
         password = parentClosure.$txtPassword.val();
 
+        console.log(userid);
+        console.log(password);
+      /*  if (!(userid && password)) {
+            showError("Please fill in both user id and password");
+            return;
+        }
+        if (!validEmail(userid)) {
+            showError("please enter a valid email id");
+            return;
+        }
+*/
         $.ajax({
             url: '/login',
             method: 'POST',
@@ -70,19 +81,14 @@ window.login = (function () {
     }
 
     function loginSH(data) {
-        window.userObj.IsAdmin = data.IsAdmin;
-        console.log("login data" + window.userObj.IsAdmin);
+        console.log(data);
+         window.userObj.IsAdmin = data.IsAdmin;
+        // console.log("login data" + window.userObj.IsAdmin);
         if (data.IsAuthenticated) {
-            // $liLogin = $("#liLogin"),
-            //     $liUser = $('#liUser');
-            // $liLogin.addClass('hidden');
-            // $liUser.removeClass('hidden');
-         //   console.log(data);
             window.sessionStorage.usr = JSON.stringify(data);
             window.location = '';
         } else {
-            parentClosure.$errorBox.removeClass('hidden');
-            parentClosure.$errorBox.append('Invalid username/password combination');
+            showError(data.error);
         }
     }
 
@@ -95,6 +101,19 @@ window.login = (function () {
         prepareHTML.htmlInjector(prepareHTML.templateFunction({}), pageSetup);
     }
 
+    function showError(msg) {
+        $('#errorMsg').removeClass('hidden').html("Error :" + msg.toString());
+    }
+
+    function validEmail(text) {
+        var input = document.createElement('input');
+        input.type = 'email';
+        input.value = text;
+        if (input.checkValidity()) {
+            return true;
+        }
+        return false;
+    }
     //init call
 
     //return 

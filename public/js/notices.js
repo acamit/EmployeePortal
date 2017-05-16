@@ -155,6 +155,10 @@ window.notices = (function () {
 
 	}
 
+	function showError(msg) {
+		$('#errorMsg').removeClass('hidden').html("Error :" + msg);
+	}
+
 	function init() {}
 
 	//return

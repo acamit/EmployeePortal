@@ -1,6 +1,7 @@
 var express = require('express');
 var date = require('date-and-time');
 var path = require('path');
+var validator = require('validator');
 var mssql = require('mssql');
 var profileRouter = express.Router();
 module.exports = function () {

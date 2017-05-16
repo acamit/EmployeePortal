@@ -1,7 +1,9 @@
 var express = require('express'),
-	issueRouter = express.Router(),
 	mssql = require('mssql'),
+	validator = require('validator'),
 	path = require('path');
+var issueRouter = express.Router();
+
 module.exports = function () {
 	issueRouter.route('/')
 		.get(function (req, res) {
@@ -301,7 +303,7 @@ module.exports = function () {
 					'..\\..\\templates',
 					'issues.hbs'));
 		});
-	
+
 	function IssuePriorityValue(priority) {
 		var priorityNum = parseInt(priority, 10);
 		var prValue = ""
